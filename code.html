@@ -1,0 +1,183 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tea Brewing Simulator</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f1115;
+      color: #e6e6e6;
+      display: flex;
+      height: 100vh;
+    }.left, .right {
+  padding: 20px;
+}
+
+.left {
+  width: 40%;
+  background: #151922;
+  border-right: 2px solid #222;
+}
+
+.right {
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+}
+
+h1 {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.card {
+  background: #1e2430;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+input, button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 8px;
+  border-radius: 8px;
+  border: none;
+}
+
+button {
+  background: #4cafef;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+button:hover {
+  background: #2b9de0;
+}
+
+.log {
+  flex: 1;
+  background: #0b0d12;
+  padding: 10px;
+  overflow-y: auto;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.bar {
+  height: 20px;
+  background: #333;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.fill {
+  height: 100%;
+  width: 0%;
+  background: #4cafef;
+  transition: width 1s linear;
+}
+
+.tea-btn {
+  margin: 5px 0;
+  background: #2a2f3a;
+}
+
+.tea-btn:hover {
+  background: #3a4152;
+}
+
+  </style>
+</head>
+<body><div class="left">
+  <h1>Customer System ☕</h1>  <div class="card">
+    <label>Customer Mood</label>
+    <input id="mood" placeholder="e.g. stressed, tired, cold">
+    <button onclick="createCustomer()">New Customer</button>
+  </div>  <div class="card">
+    <h3>Recommended Tea</h3>
+    <div id="recommend">None</div>
+  </div>  <div class="card">
+    <h3>Tea Options</h3>
+    <button class="tea-btn" onclick="brew('green')">Green Tea (2s demo)</button>
+    <button class="tea-btn" onclick="brew('black')">Black Tea (4s demo)</button>
+    <button class="tea-btn" onclick="brew('herbal')">Herbal Tea (6s demo)</button>
+    <button class="tea-btn" onclick="brew('chai')">Chai Tea (5s demo)</button>
+  </div>  <div class="card">
+    <h3>Progress</h3>
+    <div class="bar"><div class="fill" id="fill"></div></div>
+  </div>
+</div><div class="right">
+  <h1>Tea Shop Log</h1>
+  <div class="log" id="log"></div>
+</div><script>
+const teas = {
+  stressed: "Chamomile",
+  tired: "Black Tea",
+  cold: "Ginger Tea",
+  happy: "Green Tea",
+  focused: "Matcha"
+};
+
+let currentCustomer = null;
+let brewing = false;
+
+function log(msg) {
+  const logBox = document.getElementById("log");
+  logBox.innerHTML += "<div>" + msg + "</div>";
+  logBox.scrollTop = logBox.scrollHeight;
+}
+
+function createCustomer() {
+  const mood = document.getElementById("mood").value.toLowerCase();
+  if (!mood) return;
+
+  currentCustomer = mood;
+
+  const tea = teas[mood] || "Random Tea";
+  document.getElementById("recommend").innerText = tea;
+
+  log("New customer arrived with mood: " + mood);
+  log("Recommended tea: " + tea);
+}
+
+function brew(type) {
+  if (brewing) return;
+  brewing = true;
+
+  let time = 3;
+  if (type === "green") time = 2;
+  if (type === "black") time = 4;
+  if (type === "herbal") time = 6;
+  if (type === "chai") time = 5;
+
+  log("Started brewing " + type + " tea...");
+
+  let progress = 0;
+  const fill = document.getElementById("fill");
+
+  const interval = setInterval(() => {
+    progress++;
+    fill.style.width = (progress / time) * 100 + "%";
+
+    if (progress >= time) {
+      clearInterval(interval);
+      brewing = false;
+      fill.style.width = "0%";
+
+      let reward = "⭐".repeat(Math.floor(Math.random() * 5) + 1);
+      log("Tea finished: " + type + " served! " + reward);
+
+      if (currentCustomer) {
+        log("Customer with mood " + currentCustomer + " is happy!");
+      }
+    }
+  }, 1000);
+}
+
+log("Tea Shop Simulator loaded... Ready to serve customers ☕");
+</script></body>
+</html>
